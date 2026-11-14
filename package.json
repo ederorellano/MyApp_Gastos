@@ -1,0 +1,27 @@
+{
+  "name": "myapp-gastos",
+  "version": "1.0.0",
+  "description": "App simple para registrar ingresos y egresos",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ederorellano/MyApp_Gastos.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ederorellano/MyApp_Gastos/issues"
+  },
+  "homepage": "https://github.com/ederorellano/MyApp_Gastos#readme",
+  "dependencies": {
+    "express": "^4.22.3"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  }
+}

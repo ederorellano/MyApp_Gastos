@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mis Gastos</title>
+  <meta name="description" content="Registra tus ingresos y egresos de forma simple">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💸</span> Mis Gastos</div>
+    <div class="top-actions">
+      <select id="currency" aria-label="Moneda" title="Moneda">
+        <option value="ARS">ARS $</option>
+        <option value="USD">USD $</option>
+        <option value="EUR">EUR €</option>
+        <option value="MXN">MXN $</option>
+        <option value="CLP">CLP $</option>
+        <option value="COP">COP $</option>
+        <option value="PEN">PEN S/</option>
+        <option value="UYU">UYU $</option>
+      </select>
+      <button id="themeBtn" class="icon-btn" aria-label="Cambiar tema" title="Cambiar tema">🌓</button>
+    </div>
+  </header>
+
+  <main>
+    <nav class="month-nav" aria-label="Mes">
+      <button class="icon-btn" id="prevMonth" aria-label="Mes anterior">‹</button>
+      <h1 id="monthLabel">—</h1>
+      <button class="icon-btn" id="nextMonth" aria-label="Mes siguiente">›</button>
+    </nav>
+
+    <section class="cards">
+      <article class="card balance">
+        <span class="label">Balance del mes</span>
+        <strong id="balance">$0</strong>
+        <span class="sub">Acumulado: <b id="accumulated">$0</b></span>
+      </article>
+      <article class="card income">
+        <span class="label">⬆ Ingresos</span>
+        <strong id="ingresos">$0</strong>
+      </article>
+      <article class="card expense">
+        <span class="label">⬇ Egresos</span>
+        <strong id="egresos">$0</strong>
+      </article>
+    </section>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" class="tab active" data-tab="resumen" aria-selected="true">Resumen</button>
+      <button role="tab" class="tab" data-tab="movimientos" aria-selected="false">Movimientos</button>
+      <button role="tab" class="tab" data-tab="categorias" aria-selected="false">Categorías</button>
+    </div>
+
+    <!-- RESUMEN -->
+    <section class="panel" id="tab-resumen">
+      <div class="grid2">
+        <article class="box">
+          <h2>¿En qué gasto?</h2>
+          <div class="donut-wrap">
+            <svg id="donut" viewBox="0 0 42 42" class="donut" role="img" aria-label="Gastos por categoría"></svg>
+            <div class="donut-center"><span>Egresos</span><strong id="donutTotal">$0</strong></div>
+          </div>
+          <ul id="catLegend" class="legend"></ul>
+        </article>
+        <article class="box">
+          <h2>Últimos 6 meses</h2>
+          <div id="bars" class="bars"></div>
+          <div class="bars-legend"><span class="dot inc"></span>Ingresos <span class="dot exp"></span>Egresos</div>
+        </article>
+      </div>
+      <article class="box">
+        <div class="box-head"><h2>Últimos movimientos</h2><button class="link" data-goto="movimientos">Ver todos →</button></div>
+        <ul id="recentList" class="tx-list"></ul>
+      </article>
+    </section>
+
+    <!-- MOVIMIENTOS -->
+    <section class="panel hidden" id="tab-movimientos">
+      <div class="filters">
+        <input id="search" type="search" placeholder="🔎 Buscar…" aria-label="Buscar">
+        <div class="seg" id="typeFilter">
+          <button data-type="" class="active">Todos</button>
+          <button data-type="ingreso">Ingresos</button>
+          <button data-type="egreso">Egresos</button>
+        </div>
+        <select id="catFilter" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option></select>
+        <a id="exportBtn" class="btn ghost" href="#" download>⬇ Exportar CSV</a>
+      </div>
+      <ul id="txList" class="tx-list grouped"></ul>
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="panel hidden" id="tab-categorias">
+      <article class="box">
+        <h2>Nueva categoría</h2>
+        <form id="catForm" class="cat-form">
+          <input name="icon" maxlength="4" value="🏷️" aria-label="Ícono" class="emoji-input">
+          <input name="name" placeholder="Nombre" required maxlength="40">
+          <select name="type"><option value="egreso">Egreso</option><option value="ingreso">Ingreso</option></select>
+          <input type="color" name="color" value="#6366f1" aria-label="Color">
+          <button class="btn primary">Agregar</button>
+        </form>
+      </article>
+      <div class="grid2">
+        <article class="box"><h2>Egresos</h2><ul id="catsEgreso" class="cat-list"></ul></article>
+        <article class="box"><h2>Ingresos</h2><ul id="catsIngreso" class="cat-list"></ul></article>
+      </div>
+    </section>
+  </main>
+
+  <button id="fab" class="fab" aria-label="Agregar movimiento">＋</button>
+
+  <!-- MODAL MOVIMIENTO -->
+  <dialog id="txDialog" class="sheet">
+    <form id="txForm" method="dialog">
+      <div class="sheet-head">
+        <h2 id="txTitle">Nuevo movimiento</h2>
+        <button type="button" class="icon-btn" id="closeDialog" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="type-toggle" role="radiogroup">
+        <label><input type="radio" name="type" value="egreso" checked><span>⬇ Egreso</span></label>
+        <label><input type="radio" name="type" value="ingreso"><span>⬆ Ingreso</span></label>
+      </div>
+      <label class="amount-field">
+        <span id="currencySymbol">$</span>
+        <input name="amount" type="number" inputmode="decimal" step="0.01" min="0.01" placeholder="0" required autocomplete="off">
+      </label>
+      <div class="field">
+        <span class="field-label">Categoría</span>
+        <div id="catChips" class="chips"></div>
+      </div>
+      <div class="row">
+        <label class="field"><span class="field-label">Fecha</span><input name="date" type="date" required></label>
+        <label class="field grow"><span class="field-label">Descripción</span><input name="description" maxlength="200" placeholder="Ej: almuerzo con amigos"></label>
+      </div>
+      <p id="formError" class="error" role="alert"></p>
+      <div class="sheet-actions">
+        <button type="button" id="deleteTx" class="btn danger hidden">Eliminar</button>
+        <button type="submit" class="btn primary grow">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
