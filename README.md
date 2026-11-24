@@ -35,6 +35,8 @@ npm start
 
 Abrí <http://localhost:3000>. Los datos se guardan en `data/gastos.db`.
 
+**En Windows** también podés hacer doble clic en **`Abrir Gastos.bat`**: instala lo necesario la primera vez, arranca la app y abre el navegador. Para tenerlo a mano: clic derecho → *Enviar a* → *Escritorio (crear acceso directo)*.
+
 Otros comandos:
 
 ```bash
